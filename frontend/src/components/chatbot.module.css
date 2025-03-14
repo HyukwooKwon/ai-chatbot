@@ -36,7 +36,7 @@
   transform: translate(-50%, -50%);
   width: 90vw;
   max-width: 800px;
-  height: 85vh;
+  height: auto;
   background: white;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
@@ -85,7 +85,7 @@
 .pum-content iframe {
   flex-grow: 1;
   width: 100%;
-  height: calc(100% - 50px);
+  height: 100%;
   border: none;
   border-radius: 0 0 12px 12px;
   overflow: hidden;
