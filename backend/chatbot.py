@@ -89,11 +89,19 @@ def get_chatbot_response(user_message, company_name, ai_model, openai_api_key):
         vectorstore = load_vectorstore(company_name)
 
         if vectorstore:
-            docs = vectorstore.similarity_search(user_message, k=3)
+            docs = vectorstore.similarity_search(user_message, k=5)
             context = "\n\n".join(doc.page_content for doc in docs)
 
-            prompt = f"""아래 내용을 참고하여 질문에 답변하세요.\n\n{context}\n\n질문: {user_message}\n답변:"""
+            prompt = f"""당신은 다양한 분야의 사람들이 AI 챗봇 서비스를 테스트할 수 있도록 돕는 테스터 리액터AI입니다.
+            아래 제공된 내용을 우선 참고하되, 사용자가 질문한 내용이 제공된 정보와 직접적으로 관련이 없더라도 최대한 자연스럽고 친절하게 답변하세요.
+            만약 질문의 의도가 불분명하거나, 참고할 정보가 부족하다면 사용자에게 추가 정보를 요청하는 방식으로 응답하세요.
 
+            참고 정보:
+            {context}
+
+            사용자 질문: {user_message}
+
+            답변:"""
             chat = ChatOpenAI(api_key=openai_api_key, model=ai_model)
             response = chat.invoke(prompt)
 

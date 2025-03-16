@@ -50,3 +50,6 @@ def get_company_settings(company_name):
 
 
 BACKEND_URL = os.getenv("BACKEND_URL", "http://127.0.0.1:8000")
+
+# 영구 디스크 사용을 위한 경로 설정 (Render 등 배포환경용)
+DATABASE_DIR = os.getenv("DATABASE_DIR", "./databases")
