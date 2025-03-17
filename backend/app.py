@@ -4,8 +4,8 @@ from openai import OpenAI
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from sqlalchemy import create_engine, Column, Integer, String, DateTime
 from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy import create_engine, Column, Integer, String, DateTime
 from datetime import datetime
 from chatbot import get_chatbot_response
 from create_vector_db import create_or_update_faiss
