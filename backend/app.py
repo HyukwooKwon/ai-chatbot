@@ -132,11 +132,30 @@ def get_chat_history(company_name: str, limit: int = 10):
 
 @app.post("/submit-inquiry/{company_name}")
 def submit_inquiry(company_name: str, inquiry: InquiryInput):
+    settings = get_company_settings(company_name)
+
     Session = get_company_db(company_name)
     with Session() as session:
         session.add(Inquiry(contact=inquiry.contact, inquiry=inquiry.inquiry))
         session.commit()
-    return {"message": f"{company_name}의 문의가 저장되었습니다."}
+
+    # 📌 텔레그램 알림 추가
+    telegram_bot_token = settings["TELEGRAM_BOT_TOKEN_UPLOAD"]
+    telegram_chat_id = settings["TELEGRAM_CHAT_ID"]
+
+    try:
+        telegram_bot = telebot.TeleBot(telegram_bot_token)
+        telegram_bot.send_message(
+            telegram_chat_id,
+            f"📩 [{company_name}] 새로운 문의가 도착했습니다.\n\n"
+            f"📞 연락처: {inquiry.contact}\n\n"
+            f"✉️ 문의 내용:\n{inquiry.inquiry}"
+        )
+    except Exception as e:
+        print(f"텔레그램 전송 실패: {e}")
+
+    return {"message": f"{company_name}의 문의가 저장되고 텔레그램 알림이 전송되었습니다."}
+
 
 
 @app.get("/inquiries/{company_name}")
