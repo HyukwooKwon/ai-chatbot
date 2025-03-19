@@ -11,6 +11,7 @@ from chatbot import get_chatbot_response
 from create_vector_db import create_or_update_faiss
 from config import get_company_settings
 from pathlib import Path
+from fastapi.responses import FileResponse
 
 app = FastAPI()
 
@@ -154,6 +155,16 @@ def update_db(company_name: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/download-db/{company_name}")
+def download_db(company_name: str):
+    settings = get_company_settings(company_name)
+    db_dir = os.getenv("DATABASE_DIR", "./databases")
+    db_path = f"{db_dir}/{company_name}.db"
+
+    if not os.path.exists(db_path):
+        raise HTTPException(status_code=404, detail="DB 파일이 존재하지 않습니다.")
+
+    return FileResponse(path=db_path, filename=f"{company_name}.db", media_type='application/octet-stream')
 
 if __name__ == "__main__":
     import uvicorn
