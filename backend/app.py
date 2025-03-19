@@ -10,6 +10,7 @@ from datetime import datetime
 from chatbot import get_chatbot_response
 from create_vector_db import create_or_update_faiss
 from config import get_company_settings
+from pathlib import Path
 
 app = FastAPI()
 
@@ -50,10 +51,17 @@ class InquiryInput(BaseModel):
 
 
 def get_company_db(company_name):
-    db_path = f"databases/{company_name}.db"
+    if os.getenv("DATABASE_DIR"):  # Render 환경
+        db_dir = os.getenv("DATABASE_DIR")
+    else:  # 로컬 환경
+        db_dir = Path(__file__).resolve().parent / "databases"
+        
+    os.makedirs(db_dir, exist_ok=True)
+    db_path = f"{db_dir}/{company_name}.db"
     engine = create_engine(f"sqlite:///{db_path}", echo=False)
     Base.metadata.create_all(engine)
     return sessionmaker(bind=engine)
+
 
 
 def send_telegram_notification(bot_token, chat_id, company_name, user_message, bot_response):
