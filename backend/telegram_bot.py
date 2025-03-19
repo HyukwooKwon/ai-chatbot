@@ -1,7 +1,7 @@
 import os
+import time
 import telebot
 import requests
-import time
 from dotenv import load_dotenv
 from config import get_company_settings
 
@@ -35,7 +35,7 @@ def handle_message(message):
     try:
         response = requests.post(BACKEND_URL, json={"message": user_text}, timeout=5)
         response.raise_for_status()
-        bot_response = response.json().get("reply", "응답을 받을 수 없습니다.")
+        bot_response = response.json().get("reply", "응답을 받지 못했습니다.")
     except requests.exceptions.HTTPError:
         bot_response = f"서버 오류 발생 (상태 코드: {response.status_code})"
     except requests.exceptions.RequestException as e:
@@ -47,9 +47,9 @@ def handle_message(message):
 if __name__ == "__main__":
     while True:
         try:
-            print(f"{COMPANY_NAME}({COMPANY_NAME}) 텔레그램 봇 실행 중...")
+            print(f"{COMPANY_NAME} 텔레그램 봇 실행 중...")
             bot.polling()
-        
-    except Exception as e:
-        print(f"봇 오류 발생: {str(e)}. 5초 후 재시작...")
-        time.sleep(5)
+
+        except Exception as e:
+            print(f"봇 오류 발생: {str(e)}")
+            time.sleep(5)  # 5초 대기 후 재시작
